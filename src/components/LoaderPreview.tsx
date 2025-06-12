@@ -1,7 +1,7 @@
 
 import React, { useEffect, useRef } from 'react';
 
-export const LoaderPreview = ({ css, html, isHovered, size = 'md' }) => {
+export const LoaderPreview = ({ css, html, isHovered = false, size = 'md' }) => {
   const containerRef = useRef(null);
   
   useEffect(() => {

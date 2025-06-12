@@ -35,6 +35,7 @@ export const LoaderCard = ({
               css={loader.css} 
               html={loader.html}
               size="sm"
+              isHovered={isHovered}
             />
           </div>
           
@@ -42,7 +43,9 @@ export const LoaderCard = ({
             <div className="flex items-center gap-2 mb-2">
               <h3 className="text-lg font-semibold truncate">{loader.name}</h3>
               {loader.isHot && (
-                <Flame className="w-4 h-4 text-orange-500" title="Hot loader" />
+                <div className="flex items-center" title="Hot loader">
+                  <Flame className="w-4 h-4 text-orange-500" />
+                </div>
               )}
             </div>
             

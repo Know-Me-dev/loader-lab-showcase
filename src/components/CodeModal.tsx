@@ -178,6 +178,7 @@ export default ${loader.name.replace(/\s+/g, '')}Loader;`;
                     css={customizedCSS} 
                     html={customizedHTML}
                     size="lg"
+                    isHovered={false}
                   />
                 </div>
               </div>
