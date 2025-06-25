@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Heart, Eye, Copy, Flame } from 'lucide-react';
 import { LoaderPreview } from './LoaderPreview';
 
@@ -30,13 +30,26 @@ export const LoaderCard = ({
         onMouseLeave={() => setIsHovered(false)}
       >
         <div className="flex items-center gap-6">
-          <div className="flex-shrink-0 w-24 h-24 bg-muted rounded-lg flex items-center justify-center">
-            <LoaderPreview 
-              css={loader.css} 
-              html={loader.html}
-              size="sm"
-              isHovered={isHovered}
-            />
+          <div className="flex-shrink-0 w-24 h-24 bg-muted rounded-lg flex items-center justify-center overflow-x-hidden">
+            <div
+              className={
+                loader.name === "Progress Bar" || loader.name === "Fading Line"
+                  ? "w-full max-w-[72px] min-w-[56px] px-2 overflow-hidden flex items-center justify-center"
+                  : ""
+              }
+              style={
+                loader.name === "Progress Bar" || loader.name === "Fading Line"
+                  ? { minWidth: 0 }
+                  : undefined
+              }
+            >
+              <LoaderPreview 
+                css={loader.css} 
+                html={loader.html}
+                size="xs"
+                isHovered={isHovered}
+              />
+            </div>
           </div>
           
           <div className="flex-1 min-w-0">
@@ -109,12 +122,14 @@ export const LoaderCard = ({
 
   return (
     <div 
-      className="group relative bg-card border rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 hover:scale-[1.02]"
+      className="group relative bg-card border rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 hover:scale-[1.02] 
+      flex flex-col h-full min-h-[340px] sm:min-h-[360px] md:min-h-[380px] w-full"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      style={{ minWidth: '220px', width: '100%' }}
     >
       {/* Preview Area */}
-      <div className="aspect-square bg-muted/50 flex items-center justify-center p-8 relative">
+      <div className="aspect-square bg-muted/50 flex items-center justify-center p-4 sm:p-8 relative flex-shrink-0">
         {loader.isHot && (
           <div className="absolute top-3 left-3 bg-orange-500 text-white px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1">
             <Flame size={10} />
@@ -131,7 +146,7 @@ export const LoaderCard = ({
         {/* Quick Actions Overlay */}
         <div className={`absolute inset-0 bg-black/20 flex items-center justify-center gap-2 transition-opacity duration-200 ${
           isHovered ? 'opacity-100' : 'opacity-0'
-        }`}>
+        } sm:flex ${isHovered ? '' : 'pointer-events-none'} sm:pointer-events-auto`}>
           <button
             onClick={handleCopyCSS}
             className="p-3 bg-white/90 hover:bg-white rounded-full shadow-lg transition-all hover:scale-110"

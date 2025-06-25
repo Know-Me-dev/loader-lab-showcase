@@ -72,7 +72,7 @@ export const ColorCustomizer = ({ customizations, onChange }) => {
                   ...customizations,
                   primaryColor: e.target.value
                 })}
-                className="flex-1 px-2 py-1 text-sm border rounded"
+                className="flex-1 px-2 py-1 text-sm border rounded bg-card text-card-foreground dark:bg-muted dark:text-white"
               />
             </div>
           </div>
@@ -96,7 +96,7 @@ export const ColorCustomizer = ({ customizations, onChange }) => {
                   ...customizations,
                   secondaryColor: e.target.value
                 })}
-                className="flex-1 px-2 py-1 text-sm border rounded"
+                className="flex-1 px-2 py-1 text-sm border rounded bg-card text-card-foreground dark:bg-muted dark:text-white"
               />
             </div>
           </div>

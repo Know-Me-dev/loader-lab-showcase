@@ -126,10 +126,10 @@ export default ${loader.name.replace(/\s+/g, '')}Loader;`;
   if (!isOpen || !loader) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-card border rounded-2xl shadow-2xl max-w-6xl w-full max-h-[90vh] overflow-hidden">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4">
+      <div className="bg-card border rounded-2xl shadow-2xl max-w-6xl w-full max-h-[95vh] overflow-hidden flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b">
+        <div className="flex items-center justify-between p-4 sm:p-6 border-b">
           <div>
             <h2 className="text-2xl font-bold">{loader.name}</h2>
             <p className="text-sm text-muted-foreground">{loader.description}</p>
@@ -168,12 +168,12 @@ export default ${loader.name.replace(/\s+/g, '')}Loader;`;
         </div>
 
         {/* Content */}
-        <div className="flex h-96">
+        <div className="flex h-96 flex-col sm:flex-row">
           {activeTab === 'preview' && (
             <>
               {/* Preview */}
-              <div className="flex-1 bg-muted/20 flex items-center justify-center p-8">
-                <div className="bg-background rounded-xl p-8 shadow-lg">
+              <div className="flex-1 bg-muted/20 flex items-center justify-center p-4 sm:p-8">
+                <div className="bg-background rounded-xl p-4 sm:p-8 shadow-lg">
                   <LoaderPreview 
                     css={customizedCSS} 
                     html={customizedHTML}
@@ -184,7 +184,7 @@ export default ${loader.name.replace(/\s+/g, '')}Loader;`;
               </div>
               
               {/* Customization Panel */}
-              <div className="w-80 border-l p-6 overflow-y-auto">
+              <div className="w-full sm:w-80 border-t sm:border-t-0 sm:border-l p-4 sm:p-6 overflow-y-auto">
                 <ColorCustomizer
                   customizations={customizations}
                   onChange={setCustomizations}
@@ -224,7 +224,7 @@ export default ${loader.name.replace(/\s+/g, '')}Loader;`;
                   <span>Copy</span>
                 </button>
               </div>
-              <pre className="h-full p-6 bg-muted/50 overflow-auto text-sm font-mono">
+              <pre className="h-full p-4 sm:p-6 bg-muted/50 overflow-auto text-sm font-mono">
                 <code>
                   {activeTab === 'css' ? customizedCSS : customizedHTML}
                 </code>

@@ -1,16 +1,16 @@
-
-import React, { useState, useEffect, useMemo } from 'react';
-import { Search, Moon, Sun, Heart, Flame, Grid, List, Copy, Eye, Palette, Settings } from 'lucide-react';
+import { useState, useMemo, useEffect } from 'react';
+import { Search, Heart, Flame, Grid, List, User } from 'lucide-react';
 import { LoaderCard } from '../components/LoaderCard';
 import { CodeModal } from '../components/CodeModal';
 import { FilterTabs } from '../components/FilterTabs';
 import { ThemeToggle } from '../components/ThemeToggle';
-import { FavoritesSection } from '../components/FavoritesSection';
-import { LoaderPreview } from '../components/LoaderPreview';
 import { loaderData } from '../data/loaderData';
 import { useLocalStorage } from '../hooks/useLocalStorage';
-import { useTheme } from '../hooks/useTheme';
 import { toast } from 'sonner';
+import { AuthModal } from '../components/AuthModal';
+import { UserMenu } from '../components/UserMenu';
+import { useSupabaseAuth } from '../hooks/useSupabaseAuth';
+import { supabaseFavorites } from '../data/supabaseFavorites';
 
 const Index = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -20,8 +20,37 @@ const Index = () => {
   const [isCodeModalOpen, setIsCodeModalOpen] = useState(false);
   const [favorites, setFavorites] = useLocalStorage('loader-favorites', []);
   const [viewMode, setViewMode] = useState('grid');
-  const { theme, toggleTheme } = useTheme();
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [syncingFavorites, setSyncingFavorites] = useState(false);
+
+  const { user, loading: authLoading } = useSupabaseAuth();
   
+  // Sync favorites with Supabase when user logs in
+  // Reset favorites when auth state changes
+  useEffect(() => {
+    const initializeFavorites = async () => {
+      if (user) {
+        setSyncingFavorites(true);
+        try {
+          // On login, fetch user's favorites from Supabase
+          const supabaseFavs = await supabaseFavorites.getFavorites(user.id);
+          setFavorites(supabaseFavs); // Replace local favorites with server favorites
+        } catch (err) {
+          console.error('Error fetching favorites:', err);
+          toast.error('Failed to fetch favorites');
+          setFavorites([]); // Reset on error
+        } finally {
+          setSyncingFavorites(false);
+        }
+      } else {
+        // On logout, clear favorites
+        setFavorites([]);
+      }
+    };
+
+    initializeFavorites();
+  }, [user]); // Only depend on user, not favorites
+
   // Get unique tags from all loaders
   const allTags = useMemo(() => {
     const tags = new Set();
@@ -58,26 +87,38 @@ const Index = () => {
     return filtered;
   }, [searchTerm, activeFilter, activeSection, favorites]);
 
-  const toggleFavorite = (loaderId) => {
-    setFavorites(prev => {
-      const newFavorites = prev.includes(loaderId)
-        ? prev.filter(id => id !== loaderId)
-        : [...prev, loaderId];
+  const toggleFavorite = async (loaderId: number) => {
+    const removing = favorites.includes(loaderId);
+    
+    try {
+      if (user) {
+        // Update Supabase first
+        const success = removing
+          ? await supabaseFavorites.removeFavorite(user.id, loaderId)
+          : await supabaseFavorites.addFavorite(user.id, loaderId);
+
+        if (!success) throw new Error('Failed to update favorite');
+      }
+
+      // Then update local state
+      setFavorites((prev: number[]) => {
+        const newFavorites = removing
+          ? prev.filter((id: number) => id !== loaderId)
+          : [...prev, loaderId];
+        return newFavorites;
+      });
       
       toast.success(
-        prev.includes(loaderId) 
-          ? 'Removed from favorites' 
-          : 'Added to favorites',
-        {
-          duration: 2000,
-        }
+        removing ? 'Removed from favorites' : 'Added to favorites',
+        { duration: 2000 }
       );
-      
-      return newFavorites;
-    });
+    } catch (err) {
+      console.error('Error updating favorite:', err);
+      toast.error('Failed to update favorite');
+    }
   };
 
-  const openCodeModal = (loader) => {
+  const openCodeModal = (loader: typeof loaderData[number]) => {
     setSelectedLoader(loader);
     setIsCodeModalOpen(true);
   };
@@ -111,6 +152,26 @@ const Index = () => {
               >
                 {viewMode === 'grid' ? <List size={20} /> : <Grid size={20} />}
               </button>
+                {!authLoading && (
+                user ? (
+                  <UserMenu 
+                    user={user} 
+                    onLogout={() => {
+                      setFavorites([]); // Clear favorites on logout
+                      setSyncingFavorites(false);
+                    }} 
+                  />
+                ) : (
+                  <button
+                    onClick={() => setShowAuthModal(true)}
+                    className="p-2 rounded-lg hover:bg-accent transition-colors flex items-center gap-1"
+                    title="Login or Sign Up"
+                  >
+                    <User size={18} />
+                    <span className="hidden sm:inline">Login</span>
+                  </button>
+                )
+              )}
             </div>
           </div>
 
@@ -154,15 +215,13 @@ const Index = () => {
       </header>
 
       {/* Filter Tabs */}
-      {activeSection === 'all' && (
-        <div className="container mx-auto px-4 py-4">
-          <FilterTabs
-            tags={allTags}
-            activeFilter={activeFilter}
-            onFilterChange={setActiveFilter}
-          />
-        </div>
-      )}
+      <div className="container mx-auto px-4 py-4">
+        <FilterTabs
+          tags={allTags}
+          activeFilter={activeFilter}
+          onFilterChange={setActiveFilter}
+        />
+      </div>
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-6">
@@ -179,7 +238,7 @@ const Index = () => {
         ) : (
           <div className={`grid gap-6 ${
             viewMode === 'grid' 
-              ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' 
+              ? 'grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4' 
               : 'grid-cols-1 max-w-4xl mx-auto'
           }`}>
             {filteredLoaders.map((loader) => (
@@ -208,6 +267,13 @@ const Index = () => {
         loader={selectedLoader}
         isOpen={isCodeModalOpen}
         onClose={() => setIsCodeModalOpen(false)}
+      />
+
+      {/* Auth Modal */}
+      <AuthModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        onAuthSuccess={() => setShowAuthModal(false)}
       />
     </div>
   );
