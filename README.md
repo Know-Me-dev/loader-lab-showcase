@@ -1,73 +1,68 @@
-# Welcome to your Lovable project
+# Loader Lab Showcase
 
-## Project info
+A modern, customizable, and production-ready web app for discovering, previewing, and exporting high-end CSS loaders. Built with React, Tailwind CSS, and Supabase for authentication and favorites.
 
-**URL**: https://lovable.dev/projects/25fdde23-20bf-45a3-b7ca-040b06ae6477
+## Features
 
-## How can I edit this code?
+- __Large Collection of Loaders:__\
+  30+ unique, high-quality CSS loaders with live preview and code export.
 
-There are several ways of editing your application.
+- __Customization:__
 
-**Use Lovable**
+  - Change loader color, background, size, and animation speed.
+  - Gradient and multi-color support for advanced loaders.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/25fdde23-20bf-45a3-b7ca-040b06ae6477) and start prompting.
+- __Filtering & Search:__
 
-Changes made via Lovable will be committed automatically to this repo.
+  - Filter by tags and categories (Simple, Complex, Professional, etc.).
+  - Search loaders by name.
+  - Sort by newest, most popular, or alphabetically.
 
-**Use your preferred IDE**
+- __Favorites & Auth:__
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+  - Save favorite loaders (requires Supabase login).
+  - User authentication with email/password and OTP.
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+- __Developer Friendly:__
 
-Follow these steps:
+  - Copy HTML/CSS code with one click.
+  - Responsive and accessible UI.
+  - Ready for integration in any project.
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+## Getting Started
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+1. __Install dependencies:__
 
-# Step 3: Install the necessary dependencies.
-npm i
+   ```bash
+   npm install
+   # or
+   bun install
+   ```
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+2. __Set up environment variables:__
 
-**Edit a file directly in GitHub**
+   - Configure your Supabase credentials in `src/lib/supabaseClient.ts`.
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+3. __Run the app locally:__
 
-**Use GitHub Codespaces**
+   ```bash
+   npm run dev
+   # or
+   bun run dev
+   ```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+4. __Build for production:__
 
-## What technologies are used for this project?
+   ```bash
+   npm run build
+   # or
+   bun run build
+   ```
 
-This project is built with:
+## Project Structure
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/25fdde23-20bf-45a3-b7ca-040b06ae6477) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+- `src/components/` – All UI components (modals, cards, filters, etc.)
+- `src/data/loaderData.ts` – Loader definitions and metadata
+- `src/hooks/` – Custom React hooks
+- `src/pages/` – Main app pages
+- `src/lib/` – Supabase client and utilities
