@@ -88,17 +88,20 @@ const Index = () => {
   }, [searchTerm, activeFilter, activeSection, favorites]);
 
   const toggleFavorite = async (loaderId: number) => {
+    if (!user) {
+      toast.error("Please log in to manage your favorites");
+      return;
+    }
+
     const removing = favorites.includes(loaderId);
     
     try {
-      if (user) {
-        // Update Supabase first
-        const success = removing
-          ? await supabaseFavorites.removeFavorite(user.id, loaderId)
-          : await supabaseFavorites.addFavorite(user.id, loaderId);
+      // Update Supabase first
+      const success = removing
+        ? await supabaseFavorites.removeFavorite(user.id, loaderId)
+        : await supabaseFavorites.addFavorite(user.id, loaderId);
 
-        if (!success) throw new Error('Failed to update favorite');
-      }
+      if (!success) throw new Error('Failed to update favorite');
 
       // Then update local state
       setFavorites((prev: number[]) => {
