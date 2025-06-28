@@ -23,6 +23,22 @@ export function AuthModal({ isOpen, onClose, onAuthSuccess }) {
 
   if (!isOpen) return null;
 
+  const handleGoogleSignIn = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+      });
+      if (error) throw error;
+    } catch (err: any) {
+      setError(err.message || "Something went wrong");
+      toast.error(err.message || "Failed to sign in with Google");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSendCode = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -124,6 +140,26 @@ export function AuthModal({ isOpen, onClose, onAuthSuccess }) {
           <h2 className="text-2xl font-bold mb-6 text-center">
             {mode === "login" ? "Login" : "Sign Up"}
           </h2>
+
+          <button
+            type="button"
+            onClick={handleGoogleSignIn}
+            className="w-full flex items-center justify-center gap-2 py-2 mb-4 rounded bg-white text-black border hover:bg-gray-100 transition font-semibold"
+            disabled={loading}
+          >
+            <img
+              src="https://www.svgrepo.com/show/475656/google-color.svg"
+              alt="Google"
+              className="w-5 h-5"
+            />
+            Continue with Google
+          </button>
+
+          <div className="flex items-center my-4">
+            <hr className="flex-grow border-t" />
+            <span className="px-2 text-xs text-muted-foreground">OR</span>
+            <hr className="flex-grow border-t" />
+          </div>
 
           {step === "email" ? (
             <form className="space-y-4" onSubmit={handleSendCode}>

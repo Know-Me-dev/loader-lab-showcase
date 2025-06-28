@@ -12,10 +12,6 @@ export function UserMenu({ user, onLogout }) {
   const handleLogout = async () => {
     try {
       await supabase.auth.signOut();
-      // Reset auth modal state by closing if open
-      if (document.getElementById('auth-modal')) {
-        document.getElementById('auth-modal').click();
-      }
     } catch (err) {
       // fallback: clear local storage and reload
       localStorage.removeItem('supabase.auth.token');
